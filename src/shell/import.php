@@ -14,8 +14,13 @@ class AvS_FastSimpleImport_Shell_Import extends Mage_Shell_Abstract
      * Run script
      *
      */
+    protected $delimiter = ',';
+    
     public function run()
     {
+        if ($importDelimiterType = $this->getArg('delimiter')) {
+            $this->delimiter = $importDelimiterType;
+        }
         if ($importTypeCode = $this->getArg('type')) {
 
             try {
@@ -80,9 +85,9 @@ class AvS_FastSimpleImport_Shell_Import extends Mage_Shell_Abstract
 
         while (!feof($handle)) {
             if (!sizeof($fieldnames)) {
-                $fieldnames = fgetcsv($handle, null, ',', '"');
+                $fieldnames = fgetcsv($handle, null, $this->delimiter, '"');
             } else {
-                $lineData = fgetcsv($handle, null, ',', '"');
+                $lineData = fgetcsv($handle, null, $this->delimiter, '"');
                 $lineDataWithKeys = array();
                 foreach($lineData as $key => $value) {
                     if (!isset($fieldnames[$key])) {
@@ -135,6 +140,7 @@ Usage:  php -f import.php -- [options]
         php -f import.php -- --type product --file ../var/import/test.csv
 
   --type <code>                 Import type: product, category, customer or category_product
+  --delimiter <",">             Dilimiter type: "," or ";"
   --file <filename>             The relative or absolute filename
   help                          This help
 
